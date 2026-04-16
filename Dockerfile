@@ -5,4 +5,4 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jre-jammy
 COPY --from=build /target/*.jar TP_GL.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "-TP_GL.jar"]
+ENTRYPOINT ["java", "-jar", "TP_GL.jar"]
