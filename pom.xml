@@ -89,6 +89,41 @@
     		<version>2.4.0</version>
     		<scope>compile</scope>
 		</dependency>
+		<!-- Pool de connexions performant -->
+		<dependency>
+		    <groupId>com.zaxxer</groupId>
+		    <artifactId>HikariCP</artifactId>
+		</dependency>
+		
+		<!-- Tests de charge -->
+		<dependency>
+		    <groupId>org.junit.jupiter</groupId>
+		    <artifactId>junit-jupiter</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		<!-- Tests concurrentiels -->
+		<dependency>
+		    <groupId>org.awaitility</groupId>
+		    <artifactId>awaitility</artifactId>
+		    <scope>test</scope>
+		</dependency>
+		
+		<!-- Reporting -->
+		<dependency>
+		    <groupId>io.qameta.allure</groupId>
+		    <artifactId>allure-junit5</artifactId>
+		    <version>2.24.0</version>
+		    <scope>test</scope>
+		</dependency>
+
+		<!-- Source: https://mvnrepository.com/artifact/org.soot-oss/soot -->
+		<dependency>
+    			<groupId>org.soot-oss</groupId>
+    			<artifactId>soot</artifactId>
+    			<version>4.6.0</version>
+    			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -140,6 +175,27 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+			    <groupId>org.jacoco</groupId>
+			    <artifactId>jacoco-maven-plugin</artifactId>
+			    <version>0.8.11</version>
+			
+			    <executions>
+			        <execution>
+			            <goals>
+			                <goal>prepare-agent</goal>
+			            </goals>
+			        </execution>
+			
+			        <execution>
+			            <id>report</id>
+			            <phase>test</phase>
+			            <goals>
+			                <goal>report</goal>
+			            </goals>
+			        </execution>
+			    </executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -1,47 +1,48 @@
 package com.devoir.gl.entities;
 
+import java.math.BigDecimal;
 import java.util.List;
+
+import com.devoir.gl.utils.TransactionType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity @AllArgsConstructor @NoArgsConstructor
-@Table(name="users") @Data
-@Schema(description = "Represente un utilisateur")
-public class User {
-	
+@Table(name="accounts") @Data
+@Schema(description = "Represente le compte d'un utilisateur")
+public class Account {
 	@Id @Getter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Schema(description = "Nom d'utilisateur", example = "Zidane")
-	@Getter @Setter @NotBlank
-	private String first_name;
+	@Column(unique = true, nullable = false) @NotNull
+	private String accountNumber;
 	
-	@Schema(description = "Prenom d'utilisateur", example = "Paul")
-	@Getter @Setter @NotBlank
-	private String last_name;
+	private BigDecimal balance;
 	
-	@Getter @Setter @Email @Column(unique = true) @NotNull
-	@Schema(description = "Mail de l'utilisateur", example ="zzpaul@gmail.ducobu")
-	private String email;
+	@ManyToOne
+	private User user;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<Account> accounts;	
+	@Version
+	private Long version;
+	
+	@OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Transaction> transactions;
 	
 }
