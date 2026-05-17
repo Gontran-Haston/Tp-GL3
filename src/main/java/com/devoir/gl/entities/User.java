@@ -22,7 +22,7 @@ import lombok.Setter;
 
 @Entity @AllArgsConstructor @NoArgsConstructor
 @Table(name="users") @Data
-@Schema(description = "Represente un utilisateur")
+@Schema(description = "Représente un utilisateur/client du système bancaire")
 public class User {
 	
 	@Id @Getter
@@ -33,7 +33,7 @@ public class User {
 	@Getter @Setter @NotBlank
 	private String first_name;
 	
-	@Schema(description = "Prenom d'utilisateur", example = "Paul")
+	@Schema(description = "Prénom d'utilisateur", example = "Paul")
 	@Getter @Setter @NotBlank
 	private String last_name;
 	
@@ -41,7 +41,9 @@ public class User {
 	@Schema(description = "Mail de l'utilisateur", example ="zzpaul@gmail.ducobu")
 	private String email;
 	
+	// Nouveau: Comptes bancaires dans les différentes banques
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private List<Account> accounts;	
+	@Schema(description = "Comptes bancaires du client dans les différentes banques")
+	private List<BankAccount> bankAccounts;
 	
 }

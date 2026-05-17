@@ -4,20 +4,39 @@ import java.math.BigDecimal;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Getter;
-import lombok.Setter;
 
 public class TransactionDTO {
 	
-	@Getter @Setter
 	private String fromAccountNumber;
 	
-	@Getter @Setter
 	private String toAccountNumber;
 	
-	@Getter @Setter
 	@Positive
 	@NotNull
 	private BigDecimal amount;
+
+	public String getFromAccountNumber() {
+		return fromAccountNumber;
+	}
+
+	public void setFromAccountNumber(String fromAccountNumber) {
+		this.fromAccountNumber = fromAccountNumber;
+	}
+
+	public String getToAccountNumber() {
+		return toAccountNumber;
+	}
+
+	public void setToAccountNumber(String toAccountNumber) {
+		this.toAccountNumber = toAccountNumber;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
 
 }

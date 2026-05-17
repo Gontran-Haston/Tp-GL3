@@ -1,17 +1,16 @@
 package com.devoir.gl.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.devoir.gl.entities.Account;
+import com.devoir.gl.entities.Bank;
+import com.devoir.gl.entities.BankAccount.AccountSubType;
 import com.devoir.gl.entities.User;
-import com.devoir.gl.repositories.AccountRepository;
+import com.devoir.gl.repositories.BankRepository;
 import com.devoir.gl.repositories.UserRepository;
 
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
@@ -23,7 +22,10 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private BankRepository bankRepository;
+
+    @Autowired
+    private BankService bankService;
 
     @Async("taskExecutor")
     @RateLimiter(name = "userApi", fallbackMethod = "callBackApiUsing")
@@ -35,26 +37,36 @@ public class UserService {
 
         User savedUser = userRepository.save(newUser);
 
-        Account account = new Account();
-        account.setAccountNumber(generateAccountNumber());
-        account.setBalance(BigDecimal.ZERO);
-        account.setUser(savedUser);
+        // Création automatique d'un compte CHECKING
+        List<Bank> banks = bankRepository.findAll();
 
-        accountRepository.save(account);
+        if (!banks.isEmpty()) {
+
+            Bank defaultBank = banks.get(0);
+
+            bankService.createClientAccount(
+                    savedUser.getId(),
+                    defaultBank.getId(),
+                    AccountSubType.CHECKING
+            );
+        }
 
         return CompletableFuture.completedFuture(savedUser);
     }
-    
-    @Async("taskExecutor")
+
     public List<User> findAllUsers() {
         return userRepository.findAll();
     }
 
-    public String callBackApiUsing(Throwable t) {
-        return "Limite de requêtes atteinte. Veuillez réessayer plus tard.";
+    public CompletableFuture<User> callBackApiUsing(User newUser, Throwable t) {
+
+        throw new RuntimeException(
+                "Limite de requêtes atteinte. Veuillez réessayer plus tard.",
+                t
+        );
     }
 
-    private String generateAccountNumber() {
-        return "ACC-" + System.currentTimeMillis();
+    public String callBackApiUsing(Throwable t) {
+        return "Limite de requêtes atteinte. Veuillez réessayer plus tard.";
     }
 }

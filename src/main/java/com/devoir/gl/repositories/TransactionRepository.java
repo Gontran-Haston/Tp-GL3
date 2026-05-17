@@ -8,10 +8,8 @@ import com.devoir.gl.entities.Transaction;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 	
+    List<Transaction> findBySenderAccount_AccountNumberOrderByTimestampDesc(String accountNumber);
 
-    List<Transaction> findByAccount_IdOrderByTimestampDesc(Long accountId);
-
-    List<Transaction> findByAccount_AccountNumberOrderByTimestampDesc(String accountNumber);
+    List<Transaction> findByReceiverAccount_AccountNumberOrderByTimestampDesc(String accountNumber);
 	
 }
-

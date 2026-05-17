@@ -2,14 +2,25 @@ package com.devoir.gl.utils;
 
 import java.math.BigDecimal;
 
-import lombok.Getter;
-import lombok.Setter;
-
 public class DepositAndRetraitReq {
 	
-	@Getter @Setter
 	private String accountNumber;
 	
-	@Getter @Setter
     private BigDecimal amount;
+
+	public String getAccountNumber() {
+		return accountNumber;
+	}
+
+	public void setAccountNumber(String accountNumber) {
+		this.accountNumber = accountNumber;
+	}
+
+	public BigDecimal getAmount() {
+		return amount;
+	}
+
+	public void setAmount(BigDecimal amount) {
+		this.amount = amount;
+	}
 }
