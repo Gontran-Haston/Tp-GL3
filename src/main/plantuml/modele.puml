@@ -1,0 +1,325 @@
+@startuml
+title School Management System - Class Diagram
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome false
+
+' =====================================================
+' ENUMS
+' =====================================================
+
+enum UserRole {
+    ADMIN
+    TEACHER
+    STUDENT
+    PARENT
+}
+
+enum UserStatus {
+    ACTIVE
+    INACTIVE
+    SUSPENDED
+}
+
+enum PaymentStatus {
+    PENDING
+    PAID
+    FAILED
+    CANCELLED
+}
+
+enum PaymentMethod {
+    CASH
+    MOBILE_MONEY
+    BANK_TRANSFER
+    CARD
+}
+
+enum ExamType {
+    QUIZ
+    TEST
+    EXAM
+    ORAL
+}
+
+enum AttendanceStatus {
+    PRESENT
+    ABSENT
+    LATE
+    EXCUSED
+}
+
+' =====================================================
+' BASE ENTITIES
+' =====================================================
+
+abstract class AuditEntity {
+    +createdAt : LocalDateTime
+    +updatedAt : LocalDateTime
+    +createdBy : String
+    +updatedBy : String
+}
+
+abstract class User {
+    +id : UUID
+    +firstName : String
+    +lastName : String
+    +email : String
+    +phone : String
+    +passwordHash : String
+    +role : UserRole
+    +status : UserStatus
+
+    +login()
+    +logout()
+    +changePassword()
+}
+
+User --|> AuditEntity
+
+' =====================================================
+' USERS
+' =====================================================
+
+class Student {
+    +matricule : String
+    +dateOfBirth : LocalDate
+    +gender : String
+    +address : String
+    +photoUrl : String
+
+    +enroll()
+    +payFees()
+    +viewGrades()
+}
+
+class Teacher {
+    +employeeCode : String
+    +specialty : String
+    +salaryGrade : String
+
+    +assignGrade()
+    +markAttendance()
+}
+
+class Parent {
+    +occupation : String
+
+    +viewChildProgress()
+    +payStudentFees()
+}
+
+class Admin {
+    +adminLevel : Integer
+
+    +createUser()
+    +manageSystem()
+}
+
+Student --|> User
+Teacher --|> User
+Parent --|> User
+Admin --|> User
+
+' =====================================================
+' ACADEMIC DOMAIN
+' =====================================================
+
+class SchoolClass {
+    +id : UUID
+    +name : String
+    +level : String
+    +academicYear : String
+
+    +addStudent()
+    +removeStudent()
+}
+
+class Subject {
+    +id : UUID
+    +name : String
+    +coefficient : Double
+}
+
+class Course {
+    +id : UUID
+    +schedule : String
+    +room : String
+
+    +assignTeacher()
+}
+
+class Grade {
+    +id : UUID
+    +value : Double
+    +examType : ExamType
+    +term : String
+    +comment : String
+    +date : LocalDate
+
+    +calculateAverage()
+}
+
+class Attendance {
+    +id : UUID
+    +date : LocalDate
+    +status : AttendanceStatus
+    +remark : String
+}
+
+class ReportCard {
+    +id : UUID
+    +term : String
+    +average : Double
+    +rank : Integer
+    +appreciation : String
+
+    +generatePdf()
+}
+
+' =====================================================
+' PAYMENT DOMAIN
+' =====================================================
+
+class Invoice {
+    +id : UUID
+    +reference : String
+    +totalAmount : Double
+    +dueDate : LocalDate
+    +status : PaymentStatus
+
+    +generateInvoice()
+}
+
+class Payment {
+    +id : UUID
+    +amount : Double
+    +paymentDate : LocalDateTime
+    +paymentMethod : PaymentMethod
+    +reference : String
+    +status : PaymentStatus
+
+    +processPayment()
+    +refund()
+}
+
+' =====================================================
+' COMMUNICATION
+' =====================================================
+
+interface NotificationService {
+    +sendNotification(message : String)
+}
+
+class SmsNotificationService {
+    +sendNotification(message : String)
+}
+
+class WhatsAppNotificationService {
+    +sendNotification(message : String)
+}
+
+class EmailNotificationService {
+    +sendNotification(message : String)
+}
+
+NotificationService <|.. SmsNotificationService
+NotificationService <|.. WhatsAppNotificationService
+NotificationService <|.. EmailNotificationService
+
+' =====================================================
+' SECURITY
+' =====================================================
+
+class AuthService {
+    +login(email : String, password : String)
+    +logout(userId : UUID)
+    +refreshToken(token : String)
+}
+
+class JwtService {
+    +generateToken()
+    +validateToken()
+}
+
+class PasswordEncoder {
+    +encode()
+    +matches()
+}
+
+' =====================================================
+' IDENTITY SCAN
+' =====================================================
+
+class IdentityScanService {
+    +scanStudentCard()
+    +verifyIdentity()
+}
+
+' =====================================================
+' STATISTICS
+' =====================================================
+
+class StatisticsService {
+    +getRevenueStats()
+    +getStudentPerformance()
+    +getAttendanceStats()
+}
+
+' =====================================================
+' RELATIONSHIPS
+' =====================================================
+
+SchoolClass "1" o-- "*" Student
+Teacher "*" -- "*" Subject
+
+Course "*" --> "1" Teacher
+Course "*" --> "1" Subject
+Course "*" --> "1" SchoolClass
+
+Student "1" --> "*" Grade
+Course "1" --> "*" Grade
+
+Student "1" --> "*" Attendance
+
+Student "1" --> "*" Payment
+Student "1" --> "*" Invoice
+
+Student "1" --> "*" ReportCard
+
+Parent "*" --> "*" Student : responsible for
+
+Payment "*" --> "1" Invoice
+
+AuthService --> JwtService
+AuthService --> PasswordEncoder
+
+Admin --> NotificationService
+Admin --> StatisticsService
+
+Teacher --> NotificationService
+Parent --> NotificationService
+
+IdentityScanService --> Student
+
+' =====================================================
+' NOTES
+' =====================================================
+
+note right of NotificationService
+SOLID compliant notification system
+Easy to extend:
+- Push Notification
+- Telegram
+- Discord
+end note
+
+note bottom of Course
+Association entity between:
+- Teacher
+- Subject
+- SchoolClass
+end note
+
+@enduml

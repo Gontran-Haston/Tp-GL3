@@ -1,0 +1,36 @@
+@startuml
+
+start
+
+:Créer pool de threads;
+:Créer 200 tâches concurrentes;
+
+fork
+
+    :Transfert 1;
+
+fork again
+
+    :Transfert 2;
+
+fork again
+
+    :Transfert 3;
+
+fork again
+
+    :...;
+
+fork again
+
+    :Transfert 200;
+
+end fork
+
+:Attendre fin exécution;
+:Vérifier cohérence soldes;
+:Vérifier nombre transactions;
+
+stop
+
+@enduml

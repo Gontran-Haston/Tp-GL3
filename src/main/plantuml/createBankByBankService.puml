@@ -1,0 +1,30 @@
+@startuml
+start
+
+:Recevoir Bank;
+
+if (Bank == null ?) then (oui)
+
+    :IllegalArgumentException;
+    stop
+
+else (non)
+
+    :Chercher SWIFT;
+
+    if (SWIFT existe ?) then (oui)
+
+        :RuntimeException;
+        stop
+
+    else (non)
+
+        :Sauvegarder banque;
+        :Retourner banque;
+        stop
+
+    endif
+
+endif
+
+@enduml

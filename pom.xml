@@ -161,6 +161,39 @@
 				</configuration>
 			</plugin>
 			<plugin>
+    				<groupId>com.github.jeluard</groupId>
+    				<artifactId>plantuml-maven-plugin</artifactId>
+    				<version>1.2</version>
+
+    				<executions>
+        				<execution>
+            					<goals>
+                					<goal>generate</goal>
+            					</goals>
+        				</execution>
+    				</executions>
+				<configuration>
+
+               				 <!-- Dossier contenant les .puml -->
+                			<sourceFiles>
+                    				<directory>src/main/plantuml</directory>
+
+                    				<includes>
+                       					 <include>**/*.puml</include>
+                    				</includes>
+                			</sourceFiles>
+
+               				 <!-- Dossier de sortie -->
+                			<outputDirectory>
+                    				target/generated-diagrams
+                			</outputDirectory>
+
+                			<!-- Format -->
+                			<format>svg</format>
+
+            			</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>

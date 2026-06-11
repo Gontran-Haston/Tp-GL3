@@ -1,0 +1,176 @@
+@startuml
+
+title MCD MERISE - Systeme de Gestion Scolaire
+
+left to right direction
+skinparam shadowing false
+skinparam linetype polyline
+skinparam defaultTextAlignment center
+
+' =====================================================
+' ENTITES
+' =====================================================
+
+entity "UTILISATEUR" as utilisateur {
+  *id_utilisateur : UUID
+  --
+  prenom : VARCHAR
+  nom : VARCHAR
+  email : VARCHAR
+  telephone : VARCHAR
+  mot_de_passe : VARCHAR
+  role : VARCHAR
+  statut : VARCHAR
+  date_creation : DATETIME
+}
+
+entity "ETUDIANT" as etudiant {
+  *id_etudiant : UUID
+  --
+  matricule : VARCHAR
+  date_naissance : DATE
+  genre : VARCHAR
+  adresse : VARCHAR
+  photo : VARCHAR
+}
+
+entity "ENSEIGNANT" as enseignant {
+  *id_enseignant : UUID
+  --
+  code_employe : VARCHAR
+  specialite : VARCHAR
+  grade_salarial : VARCHAR
+}
+
+entity "PARENT" as parent {
+  *id_parent : UUID
+  --
+  profession : VARCHAR
+}
+
+entity "ADMINISTRATEUR" as administrateur {
+  *id_admin : UUID
+  --
+  niveau_admin : INTEGER
+}
+
+entity "CLASSE_SCOLAIRE" as classe {
+  *id_classe : UUID
+  --
+  nom : VARCHAR
+  niveau : VARCHAR
+  annee_academique : VARCHAR
+}
+
+entity "MATIERE" as matiere {
+  *id_matiere : UUID
+  --
+  nom : VARCHAR
+  coefficient : DECIMAL
+}
+
+entity "COURS" as cours {
+  *id_cours : UUID
+  --
+  horaire : VARCHAR
+  salle : VARCHAR
+}
+
+entity "NOTE" as note {
+  *id_note : UUID
+  --
+  valeur : DECIMAL
+  type_examen : VARCHAR
+  trimestre : VARCHAR
+  commentaire : TEXT
+  date_note : DATE
+}
+
+entity "PRESENCE" as presence {
+  *id_presence : UUID
+  --
+  date_presence : DATE
+  statut_presence : VARCHAR
+  remarque : TEXT
+}
+
+entity "BULLETIN" as bulletin {
+  *id_bulletin : UUID
+  --
+  trimestre : VARCHAR
+  moyenne : DECIMAL
+  rang : INTEGER
+  appreciation : TEXT
+}
+
+entity "FACTURE" as facture {
+  *id_facture : UUID
+  --
+  reference : VARCHAR
+  montant_total : DECIMAL
+  date_echeance : DATE
+  statut_facture : VARCHAR
+}
+
+entity "PAIEMENT" as paiement {
+  *id_paiement : UUID
+  --
+  montant : DECIMAL
+  date_paiement : DATETIME
+  methode_paiement : VARCHAR
+  reference : VARCHAR
+  statut_paiement : VARCHAR
+}
+
+entity "NOTIFICATION" as notification {
+  *id_notification : UUID
+  --
+  type_notification : VARCHAR
+  message : TEXT
+  date_envoi : DATETIME
+  statut_envoi : VARCHAR
+}
+
+' =====================================================
+' HERITAGE UTILISATEURS (Spécialisation)
+' =====================================================
+
+utilisateur ||--|| etudiant
+utilisateur ||--|| enseignant
+utilisateur ||--|| parent
+utilisateur ||--|| administrateur
+
+' =====================================================
+' RELATIONS PRINCIPALES
+' =====================================================
+
+' Une classe contient plusieurs étudiants
+classe ||--|{ etudiant : contient
+
+' Plusieurs enseignants peuvent enseigner plusieurs matières (Relation Many-to-Many)
+enseignant }|--|{ matiere : enseigne
+
+' Un cours est dispensé par un enseignant, concerne une matière et une classe
+cours }|--|| enseignant : dispense
+cours }|--|| matiere : concerne
+cours }|--|| classe : destine_a
+
+' Une note appartient à un étudiant et un cours
+note }|--|| etudiant : appartient
+note }|--|| cours : concerne
+
+' Les présences et bulletins sont liés à l'étudiant
+presence }|--|| etudiant : enregistre
+bulletin }|--|| etudiant : appartient
+
+' Facturation et Paiement
+facture }|--|| etudiant : generee_pour
+paiement }|--|| facture : regle
+
+' Un parent peut avoir plusieurs étudiants et vice-versa
+parent }|--|{ etudiant : responsable_de
+
+' Les notifications ciblent un utilisateur global (étudiant, parent, etc.)
+notification }|--|| utilisateur : envoyee_a
+
+@enduml

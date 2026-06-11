@@ -1,0 +1,32 @@
+@startuml
+start
+
+:Recevoir newUser;
+
+if (newUser == null ?) then (oui)
+
+    :Lever Exception;
+    stop
+
+else (non)
+
+    :Sauvegarder utilisateur;
+    :Récupérer liste banques;
+
+    if (Liste banques vide ?) then (oui)
+
+        :Retourner utilisateur;
+        stop
+
+    else (non)
+
+        :Sélectionner banque par défaut;
+        :Créer compte CHECKING;
+        :Retourner utilisateur;
+        stop
+
+    endif
+
+endif
+
+@enduml

@@ -1,0 +1,64 @@
+@startuml
+start
+
+:Recevoir sourceIBAN;
+:Recevoir destinationIBAN;
+:Recevoir montant;
+
+:Rechercher compte source;
+
+if (Compte source trouvé ?) then (non)
+
+    :Exception compte source;
+    stop
+
+else (oui)
+
+    :Rechercher compte destination;
+
+    if (Compte destination trouvé ?) then (non)
+
+        :Exception compte destination;
+        stop
+
+    else (oui)
+
+        if (Même IBAN ?) then (oui)
+
+            :Auto-transfert interdit;
+            stop
+
+        else (non)
+
+            if (Montant <= 0 ?) then (oui)
+
+                :Montant invalide;
+                stop
+
+            else (non)
+
+                if (Fonds insuffisants ?) then (oui)
+
+                    :Refuser transaction;
+                    stop
+
+                else (non)
+
+                    :Débit source;
+                    :Crédit destination;
+                    :Créer transaction débit;
+                    :Créer transaction crédit;
+                    :Sauvegarder historique;
+                    stop
+
+                endif
+
+            endif
+
+        endif
+
+    endif
+
+endif
+
+@enduml

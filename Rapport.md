@@ -216,7 +216,7 @@ CREATE TABLE users (
 
 ---
 
-## 🔄 Exemples d'Utilisation
+## Exemples d'Utilisation
 
 ### Créer une banque:
 ```json

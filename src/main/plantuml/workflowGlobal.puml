@@ -1,0 +1,39 @@
+@startuml
+
+actor Client
+
+rectangle "Frontend React" {
+
+    Client --> (API REST)
+
+}
+
+rectangle "Backend Spring Boot" {
+
+    (API REST) --> (UserService)
+    (API REST) --> (BankService)
+    (API REST) --> (TransactionService)
+    (API REST) --> (InterbankTransactionService)
+
+}
+
+database "Neon" {
+
+    (UserService) --> (Users)
+    (BankService) --> (Banks)
+    (BankService) --> (BankAccounts)
+    (TransactionService) --> (Transactions)
+    (InterbankTransactionService) --> (Transactions)
+
+}
+
+cloud "AWS Cloud" {
+
+    [EC2]
+    [Load Balancer]
+    [Auto Scaling]
+    [CloudWatch]
+
+}
+
+@enduml

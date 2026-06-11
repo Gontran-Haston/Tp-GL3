@@ -1,0 +1,65 @@
+@startuml
+start
+
+:Recevoir sourceAccount;
+:Recevoir destinationAccount;
+:Recevoir montant;
+
+:Rechercher compte source;
+
+if (Compte source existe ?) then (non)
+
+    :RuntimeException;
+    stop
+
+else (oui)
+
+    :Rechercher compte destination;
+
+    if (Compte destination existe ?) then (non)
+
+        :RuntimeException;
+        stop
+
+    else (oui)
+
+        if (Montant <= 0 ?) then (oui)
+
+            :Montant invalide;
+            stop
+
+        else (non)
+
+            if (Auto-transfert ?) then (oui)
+
+                :Refuser transfert;
+                stop
+
+            else (non)
+
+                if (Fonds insuffisants ?) then (oui)
+
+                    :Refuser retrait;
+                    stop
+
+                else (non)
+
+                    :Débiter compte source;
+                    :Créditer compte destination;
+                    :Créer transaction débit;
+                    :Créer transaction crédit;
+                    :Sauvegarder modifications;
+
+                    stop
+
+                endif
+
+            endif
+
+        endif
+
+    endif
+
+endif
+
+@enduml

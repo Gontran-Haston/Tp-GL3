@@ -1,0 +1,44 @@
+@startuml
+start
+
+:Recevoir bankOwnerId, linkedBankId;
+
+:Récupérer banque propriétaire;
+
+if (Banque propriétaire existe ?) then (non)
+
+    :RuntimeException;
+    stop
+
+else (oui)
+
+    :Récupérer banque liée;
+
+    if (Banque liée existe ?) then (non)
+
+        :RuntimeException;
+        stop
+
+    else (oui)
+
+        if (bankOwnerId == linkedBankId ?) then (oui)
+
+            :RuntimeException;
+            stop
+
+        else (non)
+
+            :Créer compte INTERBANK;
+            :Générer numéro compte;
+            :Générer IBAN;
+            :Balance = 0;
+            :Sauvegarder compte;
+            stop
+
+        endif
+
+    endif
+
+endif
+
+@enduml

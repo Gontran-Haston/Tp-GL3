@@ -1,0 +1,43 @@
+@startuml
+start
+
+:Recevoir userId, bankId, subtype;
+
+:Récupérer utilisateur;
+
+if (Utilisateur existe ?) then (non)
+
+    :RuntimeException;
+    stop
+
+else (oui)
+
+    :Récupérer banque;
+
+    if (Banque existe ?) then (non)
+
+        :RuntimeException;
+        stop
+
+    else (oui)
+
+        if (Subtype == null ?) then (oui)
+
+            :Subtype = CHECKING;
+
+        endif
+
+        :Créer compte bancaire;
+        :Générer AccountNumber;
+        :Générer IBAN;
+        :Initialiser balance = 0;
+        :Associer User + Bank;
+        :Sauvegarder compte;
+
+        stop
+
+    endif
+
+endif
+
+@enduml

@@ -1,0 +1,323 @@
+@startuml
+title Système de Gestion Scolaire - Diagramme de Classes
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome false
+
+' =====================================================
+' ENUMERATIONS
+' =====================================================
+
+enum RoleUtilisateur {
+    ADMINISTRATEUR
+    ENSEIGNANT
+    ETUDIANT
+    PARENT
+}
+
+enum StatutUtilisateur {
+    ACTIF
+    INACTIF
+    SUSPENDU
+}
+
+enum StatutPaiement {
+    EN_ATTENTE
+    PAYE
+}
+
+enum MethodePaiement {
+    MOBILE_MONEY
+    VIREMENT_BANCAIRE
+    CARTE_BANCAIRE
+}
+
+enum TypeExamen {
+    PRATIQUE
+    CC
+    DH
+    ORAL
+}
+
+enum StatutPresence {
+    PRESENT
+    ABSENT
+    RETARD
+    JUSTIFIE
+}
+
+' =====================================================
+' CLASSES DE BASE
+' =====================================================
+
+abstract class EntiteAudit {
+    +dateCreation : LocalDateTime
+    +dateModification : LocalDateTime
+    +creePar : String
+    +modifiePar : String
+}
+
+abstract class Utilisateur {
+    +id : UUID
+    +prenom : String
+    +nom : String
+    +email : String
+    +telephone : String
+    +motDePasseHash : String
+    +role : RoleUtilisateur
+    +statut : StatutUtilisateur
+
+    +seConnecter()
+    +seDeconnecter()
+    +changerMotDePasse()
+}
+
+Utilisateur --|> EntiteAudit
+
+' =====================================================
+' UTILISATEURS
+' =====================================================
+
+class Etudiant {
+    +matricule : String
+    +dateNaissance : LocalDate
+    +genre : String
+    +adresse : String
+    +photo : String
+
+    +sinscrire()
+    +payerFrais()
+    +consulterNotes()
+}
+
+class Enseignant {
+    +codeEmploye : String
+    +specialite : String
+    +gradeSalarial : String
+
+    +attribuerNote()
+    +marquerPresence()
+}
+
+class Parent {
+    +profession : String
+
+    +consulterProgressionEnfant()
+    +payerFraisEtudiant()
+}
+
+class Administrateur {
+    +niveauAdministration : Integer
+
+    +creerUtilisateur()
+    +gererSysteme()
+}
+
+Etudiant --|> Utilisateur
+Enseignant --|> Utilisateur
+Parent --|> Utilisateur
+Administrateur --|> Utilisateur
+
+' =====================================================
+' DOMAINE ACADEMIQUE
+' =====================================================
+
+class ClasseScolaire {
+    +id : UUID
+    +nom : String
+    +niveau : String
+    +anneeAcademique : String
+
+    +ajouterEtudiant()
+    +retirerEtudiant()
+}
+
+class Matiere {
+    +id : UUID
+    +nom : String
+    +coefficient : Double
+}
+
+class Cours {
+    +id : UUID
+    +horaire : String
+    +salle : String
+
+    +assignerEnseignant()
+}
+
+class Note {
+    +id : UUID
+    +valeur : Double
+    +typeExamen : TypeExamen
+    +trimestre : String
+    +commentaire : String
+    +date : LocalDate
+
+    +calculerMoyenne()
+}
+
+class Presence {
+    +id : UUID
+    +date : LocalDate
+    +statut : StatutPresence
+    +remarque : String
+}
+
+class Bulletin {
+    +id : UUID
+    +trimestre : String
+    +moyenne : Double
+    +rang : Integer
+    +appreciation : String
+
+    +genererPdf()
+}
+
+' =====================================================
+' DOMAINE PAIEMENT
+' =====================================================
+
+class Facture {
+    +id : UUID
+    +reference : String
+    +montantTotal : Double
+    +dateEcheance : LocalDate
+    +statut : StatutPaiement
+
+    +genererFacture()
+}
+
+class Paiement {
+    +id : UUID
+    +montant : Double
+    +datePaiement : LocalDateTime
+    +methodePaiement : MethodePaiement
+    +reference : String
+    +statut : StatutPaiement
+
+    +traiterPaiement()
+    +rembourser()
+}
+
+' =====================================================
+' COMMUNICATION
+' =====================================================
+
+interface ServiceNotification {
+    +envoyerNotification(message : String)
+}
+
+class ServiceNotificationSMS {
+    +envoyerNotification(message : String)
+}
+
+class ServiceNotificationWhatsApp {
+    +envoyerNotification(message : String)
+}
+
+class ServiceNotificationEmail {
+    +envoyerNotification(message : String)
+}
+
+ServiceNotification <|.. ServiceNotificationSMS
+ServiceNotification <|.. ServiceNotificationWhatsApp
+ServiceNotification <|.. ServiceNotificationEmail
+
+' =====================================================
+' SECURITE
+' =====================================================
+
+class ServiceAuthentification {
+    +connexion(email : String, motDePasse : String)
+    +deconnexion(idUtilisateur : UUID)
+    +rafraichirToken(token : String)
+}
+
+class ServiceJWT {
+    +genererToken()
+    +validerToken()
+}
+
+class EncodeurMotDePasse {
+    +encoder()
+    +verifier()
+}
+
+' =====================================================
+' SCAN IDENTITE
+' =====================================================
+
+class ServiceScanIdentite {
+    +scannerCarteEtudiant()
+    +verifierIdentite()
+}
+
+' =====================================================
+' STATISTIQUES
+' =====================================================
+
+class ServiceStatistiques {
+    +obtenirStatistiquesRevenus()
+    +obtenirPerformancesEtudiants()
+    +obtenirStatistiquesPresence()
+}
+
+' =====================================================
+' RELATIONS
+' =====================================================
+
+ClasseScolaire "1" o-- "*" Etudiant
+Enseignant "*" -- "*" Matiere
+
+Cours "*" --> "1" Enseignant
+Cours "*" --> "1" Matiere
+Cours "*" --> "1" ClasseScolaire
+
+Etudiant "1" --> "*" Note
+Cours "1" --> "*" Note
+
+Etudiant "1" --> "*" Presence
+
+Etudiant "1" --> "3" Paiement
+Etudiant "1" --> "3" Facture
+
+Etudiant "1" --> "6" Bulletin : a droit à
+
+Parent "2" --> "*" Etudiant : responsable de
+
+Paiement "*" --> "1" Facture
+
+ServiceAuthentification --> ServiceJWT
+ServiceAuthentification --> EncodeurMotDePasse
+
+Administrateur --> ServiceNotification
+Administrateur --> ServiceStatistiques
+
+Enseignant --> ServiceNotification
+Parent --> ServiceNotification
+
+ServiceScanIdentite --> Etudiant
+
+' =====================================================
+' NOTES
+' =====================================================
+
+note right of ServiceNotification
+Architecture SOLID :
+facile à étendre avec :
+- Telegram
+- Push mobile
+- Discord
+- Slack
+end note
+
+note bottom of Cours
+Classe d'association entre :
+- Enseignant
+- Matière
+- Classe scolaire
+end note
+
+@enduml
