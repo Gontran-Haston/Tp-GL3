@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
+// @CrossOrigin(origins = "*") // Permet les requêtes depuis n'importe quelle origine (à ajuster en production)
 @Tag(name = "Gestion des utilisateurs du systeme bancaire simplifie", description = "API pour creer et gerer les utilisateurs")
 public class UserController {
 	

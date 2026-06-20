@@ -42,7 +42,7 @@ public class Bank {
 	@Getter
 	@Setter
 	@NotBlank
-	@Column(unique = true, length = 8)
+	@Column(unique = true, length = 20)
 	@Schema(description = "Code SWIFT identifiant unique de la banque", example = "BNFRFRPP")
 	private String swiftCode;
 

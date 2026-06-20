@@ -73,9 +73,9 @@ public class BankAccount {
     private AccountType accountType;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
+    @Column(nullable = true, length = 20)
     @Schema(
-        description = "Sous-type de compte pour les comptes clients : SAVINGS ou CHECKING"
+        description = "Sous-type de compte pour les comptes clients : SAVINGS ou CHECKING et NULL pour INTERBANK"
     )
     private AccountSubType accountSubtype = AccountSubType.CHECKING;
 

@@ -22,6 +22,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/banks")
+// @CrossOrigin(origins = "*") // Permet les requêtes depuis n'importe quelle origine (à ajuster en production)
 @Tag(name = "Gestion des banques", description = "API pour gérer les institutions bancaires et leurs comptes")
 public class BankController {
 

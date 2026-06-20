@@ -20,15 +20,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
+// @CrossOrigin(origins = "*") // Permet les requêtes depuis n'importe quelle origine (à ajuster en production)
 public class TransactionController {
 
     private TransactionService transactionService;
 
-//    @PostMapping
-//    public ResponseEntity<Void> transfer(@RequestBody Transaction req) {
-//    	transactionService.transfer(req.from(), req.to(), req.amount());
-//        return ResponseEntity.ok().build();
-//    }
     @PostMapping
     public ResponseEntity<Void> transfer(@RequestBody TransactionDTO req) {
         transactionService.transfer(

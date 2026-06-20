@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  */
 @RestController
 @RequestMapping("/api/interbank-transactions")
+// @CrossOrigin(origins = "*") // Permet les requêtes depuis n'importe quelle origine (à ajuster en production)
 @Tag(name = "Transactions inter-banques", description = "API pour gérer les virements entre comptes (intra et inter-banques)")
 public class InterbankTransactionController {
 

@@ -63,7 +63,7 @@ class TransactionServiceTest {
 
 		bank = new Bank();
 		bank.setName("Test Bank " + System.nanoTime());
-		bank.setSwiftCode(("TS" + System.nanoTime()).substring(0, 8));
+		bank.setSwiftCode(("TS" + System.nanoTime()));
 		bank.setCountry("France");
 		bank.setIbanPrefix("FR");
 		bank = bankRepository.save(bank);

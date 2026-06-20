@@ -10,11 +10,11 @@ Utilisateur → Compte → Transactions
 Nous avons transformé cela en un **vrai système bancaire multi-institution** :
 ```
 Banque
-├── Comptes Clients (Account Type = CLIENT)
-│   └── Propriétaire: User (particulier)
+|-- Comptes Clients (Account Type = CLIENT)
+│    |-- Propriétaire: User (particulier)
 │
-└── Comptes Inter-banques (Account Type = INTERBANK)
-    └── Correspondance avec autre Banque
+|-- Comptes Inter-banques (Account Type = INTERBANK)
+    |-- Correspondance avec autre Banque
 ```
 
 ---
@@ -170,8 +170,21 @@ BankAccount (1) ──── (N) Transaction
   ├─ Transactions envoyées (sender)
   └─ Transactions reçues (receiver)
 ```
-[!Representation de la BD](modele.png)
+![Representation de la BD](modele.png)
 
+![Representation des tests de concurrence](target/generated-diagrams/concurrentFlowTest.svg )
+
+![Representation de creation d'un banque](target/generated-diagrams/createBankByBankService.svg  )
+
+![Representation de la creation d'un compte client dans une banque](target/generated-diagrams/createClientAccountByBankService.svg )
+
+![Representation de la creation d'un compte interbancaire](target/generated-diagrams/createInterbankAccountByBankService.svg  )
+
+![Representation de la creation d'un utilisateur](target/generated-diagrams/createUserByUserService.svg  )
+
+![Representation de la transaction bancaire](target/generated-diagrams/transferByTransactionService.svg )
+
+![Representation de la transaction interbancaire](target/generated-diagrams/transferInterbankByInterbanTransactionService.svg  )
 ### Exemple SQL:
 ```sql
 CREATE TABLE banks (
